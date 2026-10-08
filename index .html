@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PlanArnaldoElect</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+html,body{height:100%}
+
+body{
+    font-family:system-ui,Arial,sans-serif;
+    background:#07100c;
+    color:#fff;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+header{
+    height:54px;
+    background:#0d1712;
+    border-bottom:1px solid #26352c;
+    display:flex;
+    align-items:center;
+    padding:6px 10px;
+    gap:8px;
+}
+
+.logo{font-size:22px;line-height:1}
+
+.title{flex:1;min-width:0}
+
+.title b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.title small{color:#8ea097;font-size:10px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+button{
+    border:1px solid #31443a;
+    background:#15231c;
+    color:#fff;
+    border-radius:7px;
+    padding:8px 10px;
+    font-weight:bold;
+    font-size:12px;
+    cursor:pointer;
+    font-family:inherit;
+}
+
+button:active{transform:scale(.95)}
+
+button.green{background:#08783f;border-color:#20df76}
+button.red{background:#922d35;border-color:#c0464f}
+button.blue{background:#145f8c;border-color:#3d9fe0}
+
+#app{
+    height:calc(100vh - 54px);
+    height:calc(100dvh - 54px);
+    display:flex;
+    position:relative;
+}
+
+#side{
+    width:226px;
+    background:#101a15;
+    border-right:1px solid #26352c;
+    padding:8px;
+    overflow-y:auto;
+    flex:none;
+}
+
+.titleSide{
+    color:#7f9187;
+    font-size:10px;
+    margin:8px 3px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+}
+
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+
+.tool{height:56px;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+
+.tool span{font-size:19px;line-height:1}
+
+.tool.active{background:#08783f;border-color:#20df76}
+
+#workspace{flex:1;min-width:0;display:flex;flex-direction:column}
+
+#bar{
+    height:44px;
+    display:flex;
+    gap:5px;
+    align-items:center;
+    padding:5px;
+    overflow-x:auto;
+    background:#0b1410;
+    border-bottom:1px solid #26352c;
+    flex:none;
+    scrollbar-width:thin;
+}
+
+#bar button{white-space:nowrap;flex:none}
+
+#canvasBox{
+    flex:1;
+    position:relative;
+    overflow:hidden;
+    background:#fff;
+    min-height:0;
+}
+
+canvas{
+    display:block;
+    touch-action:none;
+    cursor:crosshair;
+}
+
+#status{
+    height:25px;
+    background:#0c1510;
+    border-top:1px solid #26352c;
+    color:#82938a;
+    font-size:10px;
+    display:flex;
+    align-items:center;
+    padding:0 8px;
+    gap:14px;
+    flex:none;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+#status b{color:#b9d6c6;font-weight:600}
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:15px;
+}
+
+.modal.show{display:flex}
+
+.box{
+    width:min(400px,100%);
+    background:#111b15;
+    border:1px solid #385143;
+    border-radius:12px;
+    padding:15px;
+}
+
+.box h2{margin-bottom:12px;font-size:17px}
+
+.box input{
+    width:100%;
+    padding:10px;
+    margin:6px 0 10px;
+    background:#050907;
+    color:#fff;
+    border:1px solid #304238;
+    border-radius:6px;
+    font-family:inherit;
+    font-size:14px;
+}
+
+.actions{display:flex;gap:7px}
+
+.actions button{flex:1;padding:10px}
+
+/* ---------- painel de propriedades ---------- */
+
+#props{
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:212px;
+    background:rgba(13,23,18,.97);
+    border:1px solid #385143;
+    border-radius:10px;
+    padding:10px;
+    font-size:11px;
+    z-index:15;
+    max-height:calc(100% - 16px);
+    overflow-y:auto;
+    box-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+
+#props.hidden{display:none}
+
+#props .head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:9px;
+    font-weight:bold;
+    font-size:12px;
+    color:#9fe6bd;
+}
+
+#props .head button{padding:2px 7px;font-size:11px}
+
+#props .field{margin-bottom:8px}
+
+#props label{display:block;color:#8ea097;font-size:10px;margin-bottom:3px}
+
+#props input{
+    width:100%;
+    background:#050907;
+    border:1px solid #304238;
+    color:#fff;
+    padding:6px;
+    border-radius:5px;
+    font-size:11px;
+    font-family:inherit;
+}
+
+#props .row{display:flex;gap:4px;align-items:center}
+
+#props .row button{padding:6px 9px}
+
+#props .info{color:#8ea097;font-size:10px;margin-top:5px;line-height:1.5}
+
+/* ---------- aviso ---------- */
+
+#toast{
+    position:fixed;
+    left:50%;
+    bottom:130px;
+    transform:translateX(-50%) translateY(18px);
+    background:#15231c;
+    border:1px solid #385143;
+    color:#d7ffe8;
+    padding:9px 16px;
+    border-radius:20px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:200;
+    max-width:90vw;
+    text-align:center;
+}
+
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- telemóvel ---------- */
+
+@media(max-width:700px){
+
+    #side{
+        position:absolute;
+        z-index:20;
+        bottom:0;
+        left:0;
+        width:100%;
+        height:84px;
+        padding:5px;
+        overflow-x:auto;
+        overflow-y:hidden;
+        border-top:1px solid #26352c;
+        border-right:0;
+        display:flex;
+        align-items:center;
+    }
+
+    .titleSide{display:none}
+
+    .tools{display:flex;gap:5px;width:max-content}
+
+    .tool{width:62px;height:70px;flex:none}
+
+    #workspace{padding-bottom:84px}
+
+    #props{width:150px;font-size:10px;top:6px;right:6px;padding:8px}
+
+    #props .head{font-size:11px}
+
+    .title small{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🏠⚡</div>
+    <div class="title">
+        <b>MalangutElect-Plant</b>
+        <small>Projeto de plantas e instalações elétricas</small>
+    </div>
+    <button onclick="undo()" title="Desfazer (Ctrl+Z)">↩</button>
+    <button onclick="redo()" title="Refazer (Ctrl+Y)">↪</button>
+    <button class="green" onclick="saveFile()" title="Guardar">💾</button>
+</header>
+
+<div id="app">
+
+<aside id="side">
+
+    <div class="titleSide">Ferramentas</div>
+
+    <div class="tools">
+
+        <button class="tool active" data-tool="select"><span>🖱️</span>Selecionar</button>
+        <button class="tool" data-tool="pan"><span>✋</span>Mover</button>
+        <button class="tool" data-tool="wall"><span>🧱</span>Parede</button>
+        <button class="tool" data-tool="door"><span>🚪</span>Porta</button>
+        <button class="tool" data-tool="window"><span>🪟</span>Janela</button>
+        <button class="tool" data-tool="lamp"><span>💡</span>Luz</button>
+        <button class="tool" data-tool="switch"><span>🔘</span>Interruptor</button>
+        <button class="tool" data-tool="socket"><span>🔌</span>Tomada</button>
+        <button class="tool" data-tool="panel"><span>⚡</span>Quadro</button>
+        <button class="tool" data-tool="wire"><span>〰️</span>Condutor</button>
+        <button class="tool" data-tool="dimension"><span>📏</span>Cota</button>
+        <button class="tool" data-tool="text"><span>🔤</span>Texto</button>
+        <button class="tool" data-tool="erase"><span>🗑️</span>Apagar</button>
+
+    </div>
+
+</aside>
+
+<main id="workspace">
+
+    <div id="bar">
+        <button onclick="zoom(1.25)">＋</button>
+        <button onclick="zoom(0.8)">－</button>
+        <button onclick="fitView()" title="Ajustar à planta">🔍 Ajustar</button>
+        <button onclick="resetView()" title="Centrar">⌂</button>
+        <button onclick="rotate(-15)" title="Rodar à esquerda">↶</button>
+        <button onclick="rotate(15)" title="Rodar à direita">↷</button>
+        <button onclick="toggleGrid()" id="btnGrid" title="Grelha">▦</button>
+        <button onclick="toggleSnap()" id="btnSnap" title="Encaixe">🧲</button>
+        <button onclick="deleteSelected()" class="red">🗑 Apagar</button>
+        <button onclick="duplicateSelected()">⧉ Duplicar</button>
+        <button onclick="newProject()">📄 Novo</button>
+        <button onclick="loadFile()">📂 Abrir</button>
+        <button onclick="exportPNG()" class="blue">🖼 PNG</button>
+    </div>
+
+    <div id="canvasBox">
+        <canvas id="canvas"></canvas>
+
+        <div id="props" class="hidden">
+            <div class="head">
+                <span id="propsTitle">Propriedades</span>
+                <button onclick="deselect()">✕</button>
+            </div>
+            <div id="propsBody"></div>
+        </div>
+    </div>
+
+    <div id="status">
+        <span id="toolText">Selecionar</span>
+        <span id="coord">X: 0.00 m &nbsp; Y: 0.00 m</span>
+        <span id="zoomText">100%</span>
+        <span id="countText">0 elementos</span>
+    </div>
+
+</main>
+
+</div>
+
+<div class="modal" id="textModal">
+    <div class="box">
+        <h2>🔤 Texto</h2>
+        <input id="textInput" placeholder="Ex.: QUARTO 1" maxlength="60">
+        <div class="actions">
+            <button onclick="closeText()">Cancelar</button>
+            <button class="green" onclick="addText()">Adicionar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
+
+<input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+
+<script>
+/* =====================================================
+   ELECTROPLAN PRO — versão corrigida
+   Papel branco + paredes pretas + correções gerais
+===================================================== */
+
+/* ---------- atalhos ---------- */
+
+const $ = id => document.getElementById(id);
+
+const canvas    = $("canvas");
+const ctx       = canvas.getContext("2d");
+const canvasBox = $("canvasBox");
+
+/* ---------- estado ---------- */
+
+let W = 0, H = 0, DPR = 1;
+
+let elements = [];
+let selected = null;
+
+let tool = "select";
+
+let grid        = 40;     // 40 px = 1 metro
+let snapOn      = true;
+let gridOn      = true;
+let wallDefault = 14;     // espessura padrão da parede (px de mundo)
+
+let view = { x: 0, y: 0, scale: 1 };
+
+let draft     = null;     // rascunho (parede / condutor / cota)
+let action    = null;     // ação do ponteiro
+let textPoint = null;
+let spaceDown = false;
+let initialized = false;
+
+let history = [];
+let future  = [];
+
+const pointers = new Map();
+let pinch = null;
+
+/* cores */
+const INK    = "#111111";   // traço principal (parede / símbolos)
+const BLUE   = "#0b6fa4";   // janela / tomada / condutor
+const AMBER  = "#c98a00";   // luz
+const ORANGE = "#c96a00";   // interruptor
+const RED    = "#c0392b";   // quadro
+const DIM    = "#444444";   // cotas
+const SEL    = "#00a651";   // seleção
+
+/* ---------- utilidades ---------- */
+
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+const dist  = (a,b) => Math.hypot(a.x-b.x, a.y-b.y);
+const uid   = () => Date.now() + Math.random();
+
+let toastTimer = null;
+function toast(msg){
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1900);
+}
+
+function nomeTool(t){
+    return {
+        select:"Selecionar", pan:"Mover", wall:"Parede", door:"Porta",
+        window:"Janela", lamp:"Ponto de luz", switch:"Interruptor",
+        socket:"Tomada", panel:"Quadro elétrico", wire:"Condutor",
+        dimension:"Cota", text:"Texto", erase:"Apagar"
+    }[t] || t;
+}
+
+/* =====================================================
+   DIMENSIONAMENTO
+===================================================== */
+
+function resize(){
+
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    W = Math.max(1, canvasBox.clientWidth);
+    H = Math.max(1, canvasBox.clientHeight);
+
+    canvas.width  = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.width  = W + "px";
+    canvas.style.height = H + "px";
+
+    if(!initialized){
+        view.x = W / 2;
+        view.y = H / 2;
+        initialized = true;
+    }
+
+    draw();
+}
+
+window.addEventListener("resize", resize);
+
+if(window.ResizeObserver){
+    new ResizeObserver(() => resize()).observe(canvasBox);
+}
+
+/* =====================================================
+   COORDENADAS
+===================================================== */
+
+function world(clientX, clientY){
+    const r = canvas.getBoundingClientRect();
+    return {
+        x: (clientX - r.left - view.x) / view.scale,
+        y: (clientY - r.top  - view.y) / view.scale
+    };
+}
+
+function snapPoint(p){
+    if(!snapOn) return { x: p.x, y: p.y };
+    return {
+        x: Math.round(p.x / grid) * grid,
+        y: Math.round(p.y / grid) * grid
+    };
+}
+
+/* =====================================================
+   HISTÓRICO
+===================================================== */
+
+function pushHistory(){
+    history.push(JSON.stringify(elements));
+    if(history.length > 60) history.shift();
+    future.length = 0;
+}
+
+function undo(){
+    if(!history.length){ toast("Nada para desfazer."); return; }
+    future.push(JSON.stringify(elements));
+    elements = JSON.parse(history.pop());
+    selected = null;
+    renderProps();
+    draw();
+    toast("Desfeito");
+}
+
+function redo(){
+    if(!future.length){ toast("Nada para refazer."); return; }
+    history.push(JSON.stringify(elements));
+    elements = JSON.parse(future.pop());
+    selected = null;
+    renderProps();
+    draw();
+    toast("Refeito");
+}
+
+/* =====================================================
+   FERRAMENTAS
+===================================================== */
+
+document.querySelectorAll(".tool").forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        document.querySelectorAll(".tool")
+            .forEach(x => x.classList.remove("active"));
+
+        btn.classList.add("active");
+
+        tool = btn.dataset.tool;
+
+        draft  = null;
+        action = null;
+
+        $("toolText").textContent = nomeTool(tool);
+
+        canvas.style.cursor =
+            tool === "pan"    ? "grab" :
+            tool === "select" ? "default" :
+            tool === "erase"  ? "not-allowed" : "crosshair";
+
+        renderProps();
+        draw();
+    });
+});
+
+function setTool(t){
+    const btn = document.querySelector('.tool[data-tool="' + t + '"]');
+    if(btn) btn.click();
+}
+
+/* =====================================================
+   LABELS AUTOMÁTICAS
+===================================================== */
+
+function autoLabel(t){
+    const n = elements.filter(e => e.type === t).length + 1;
+    switch(t){
+        case "lamp":   return "L" + n;
+        case "switch": return "S" + n;
+        case "socket": return "T" + n;
+        case "door":   return "P" + n;
+        case "window": return "J" + n;
+        case "panel":  return n > 1 ? "QE" + n : "QE";
+    }
+    return "";
+}
+
+function autoCircuit(){
+    return "C" + (elements.filter(e => e.type === "wire").length + 1);
+}
+
+/* =====================================================
+   PONTEIRO
+===================================================== */
+
+canvas.addEventListener("pointerdown", onDown);
+canvas.addEventListener("pointermove", onMove);
+canvas.addEventListener("pointerup", onUp);
+canvas.addEventListener("pointercancel", onUp);
+canvas.addEventListener("pointerleave", onUp);
+
+canvas.addEventListener("contextmenu", e => e.preventDefault());
+
+function onDown(ev){
+
+    pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+
+    /* dois dedos → pinça */
+    if(pointers.size === 2){
+        startPinch();
+        return;
+    }
+    if(pointers.size > 2) return;
+
+    try{ canvas.setPointerCapture(ev.pointerId); }catch(e){}
+
+    ev.preventDefault();
+
+    const w = world(ev.clientX, ev.clientY);
+
+    /* ---- deslocar vista ---- */
+    if(ev.button === 1 || spaceDown || tool === "pan"){
+        action = {
+            type: "pan",
+            sx: ev.clientX,
+            sy: ev.clientY,
+            vx: view.x,
+            vy: view.y
+        };
+        canvas.style.cursor = "grabbing";
+        return;
+    }
+
+    if(ev.button !== 0) return;
+
+    /* ---- selecionar ---- */
+    if(tool === "select"){
+
+        const hit = find(w.x, w.y);
+        selected = hit || null;
+
+        if(hit){
+            action = {
+                type: "drag",
+                start: w,
+                orig: JSON.parse(JSON.stringify(hit)),
+                moved: false
+            };
+        } else {
+            action = null;
+        }
+
+        renderProps();
+        draw();
+        return;
+    }
+
+    /* ---- apagar ---- */
+    if(tool === "erase"){
+        action = { type: "erase", moved: false };
+        eraseAt(w.x, w.y);
+        return;
+    }
+
+    /* ---- texto ---- */
+    if(tool === "text"){
+        textPoint = snapPoint(w);
+        openTextModal();
+        return;
+    }
+
+    /* ---- linhas ---- */
+    if(tool === "wall" || tool === "wire" || tool === "dimension"){
+
+        const p = snapPoint(w);
+
+        draft = { type: tool, x1: p.x, y1: p.y, x2: p.x, y2: p.y };
+        action = { type: "draw" };
+
+        draw();
+        return;
+    }
+
+    /* ---- símbolos pontuais ---- */
+    if(["door","window","lamp","switch","socket","panel"].includes(tool)){
+
+        const p = snapPoint(w);
+
+        pushHistory();
+
+        const el = {
+            id: uid(),
+            type: tool,
+            x: p.x,
+            y: p.y,
+            angle: 0,
+            label: autoLabel(tool)
+        };
+
+        elements.push(el);
+        selected = el;
+
+        renderProps();
+        draw();
+    }
+}
+
+function onMove(ev){
+
+    if(pointers.has(ev.pointerId)){
+        pointers.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    }
+
+    /* ---- pinça ---- */
+    if(pinch && pointers.size >= 2){
+        updatePinch();
+        draw();
+        return;
+    }
+
+    const w = world(ev.clientX, ev.clientY);
+    const p = snapPoint(w);
+
+    $("coord").textContent =
+        "X: " + (p.x / grid).toFixed(2) + " m \u00A0 Y: " + (p.y / grid).toFixed(2) + " m";
+
+    if(!action) return;
+
+    /* ---- deslocar ---- */
+    if(action.type === "pan"){
+        view.x = action.vx + (ev.clientX - action.sx);
+        view.y = action.vy + (ev.clientY - action.sy);
+        draw();
+        return;
+    }
+
+    /* ---- arrastar elemento ---- */
+    if(action.type === "drag" && selected){
+
+        let dx = w.x - action.start.x;
+        let dy = w.y - action.start.y;
+
+        if(snapOn){
+            dx = Math.round(dx / grid) * grid;
+            dy = Math.round(dy / grid) * grid;
+        }
+
+        if(dx !== 0 || dy !== 0){
+
+            if(!action.moved){
+                pushHistory();
+                action.moved = true;
+            }
+
+            applyOffset(selected, action.orig, dx, dy);
+            draw();
+        }
+        return;
+    }
+
+    /* ---- apagar arrastando ---- */
+    if(action.type === "erase"){
+        eraseAt(w.x, w.y);
+        return;
+    }
+
+    /* ---- desenhar linha ---- */
+    if(action.type === "draw" && draft){
+        draft.x2 = p.x;
+        draft.y2 = p.y;
+        draw();
+        return;
+    }
+}
+
+function onUp(ev){
+
+    pointers.delete(ev.pointerId);
+    if(pointers.size < 2) pinch = null;
+
+    if(action && action.type === "draw" && draft){
+
+        const len = Math.hypot(draft.x2 - draft.x1, draft.y2 - draft.y1);
+
+        /* só cria se tiver tamanho visível no ecrã */
+        if(len * view.scale > 6){
+
+            pushHistory();
+
+            if(draft.type === "wall"){
+                elements.push({
+                    id: uid(), type: "wall",
+                    x1: draft.x1, y1: draft.y1,
+                    x2: draft.x2, y2: draft.y2,
+                    w: wallDefault
+                });
+            }
+            else if(draft.type === "wire"){
+                elements.push({
+                    id: uid(), type: "wire",
+                    x1: draft.x1, y1: draft.y1,
+                    x2: draft.x2, y2: draft.y2,
+                    label: autoCircuit()
+                });
+            }
+            else{
+                elements.push({
+                    id: uid(), type: "dimension",
+                    x1: draft.x1, y1: draft.y1,
+                    x2: draft.x2, y2: draft.y2
+                });
+            }
+        }
+
+        draft = null;
+    }
+
+    action = null;
+    canvas.style.cursor =
+        tool === "pan" ? "grab" :
+        tool === "select" ? "default" :
+        tool === "erase" ? "not-allowed" : "crosshair";
+
+    draw();
+}
+
+/* ---------- pinça (zoom com dois dedos) ---------- */
+
+function startPinch(){
+
+    const pts = [...pointers.values()];
+    if(pts.length < 2) return;
+
+    const [a,b] = pts;
+    const r = canvas.getBoundingClientRect();
+
+    pinch = {
+        d: Math.max(1, dist(a,b)),
+        mid: {
+            x: (a.x + b.x)/2 - r.left,
+            y: (a.y + b.y)/2 - r.top
+        },
+        view: { x: view.x, y: view.y, scale: view.scale }
+    };
+
+    action = null;
+    draft  = null;
+}
+
+function updatePinch(){
+
+    const pts = [...pointers.values()];
+    if(pts.length < 2) return;
+
+    const [a,b] = pts;
+    const r = canvas.getBoundingClientRect();
+
+    const d2 = Math.max(1, dist(a,b));
+
+    const midX = (a.x + b.x)/2 - r.left;
+    const midY = (a.y + b.y)/2 - r.top;
+
+    const scale = clamp(pinch.view.scale * (d2 / pinch.d), 0.15, 8);
+    const k = scale / pinch.view.scale;
+
+    view.scale = scale;
+    view.x = midX - (pinch.mid.x - pinch.view.x) * k;
+    view.y = midY - (pinch.mid.y - pinch.view.y) * k;
+}
+
+/* =====================================================
+   MOVER ELEMENTO
+===================================================== */
+
+function applyOffset(el, orig, dx, dy){
+
+    if(orig.x1 !== undefined){
+        el.x1 = orig.x1 + dx;
+        el.y1 = orig.y1 + dy;
+        el.x2 = orig.x2 + dx;
+        el.y2 = orig.y2 + dy;
+    } else {
+        el.x = orig.x + dx;
+        el.y = orig.y + dy;
+    }
+}
+
+/* =====================================================
+   APAGAR
+===================================================== */
+
+function eraseAt(x, y){
+
+    const hit = find(x, y);
+    if(!hit) return;
+
+    if(action && action.type === "erase" && !action.moved){
+        pushHistory();
+        action.moved = true;
+    }
+
+    elements = elements.filter(e => e.id !== hit.id);
+
+    if(selected && selected.id === hit.id){
+        selected = null;
+        renderProps();
+    }
+
+    draw();
+}
+
+/* =====================================================
+   LOCALIZAR ELEMENTO
+===================================================== */
+
+function radiusOf(e){
+    switch(e.type){
+        case "door":   return 55;
+        case "window": return 42;
+        case "lamp":   return 16;
+        case "switch": return 12;
+        case "socket": return 14;
+        case "panel":  return 30;
+        case "text":   return 18;
+    }
+    return 14;
+}
+
+function find(x, y){
+
+    const tol = 12 / view.scale;
+
+    for(let i = elements.length - 1; i >= 0; i--){
+
+        const e = elements[i];
+
+        if(e.type === "wall" || e.type === "wire" || e.type === "dimension"){
+
+            const t = e.type === "wall"
+                ? Math.max(tol, (e.w || wallDefault) / 2 + 2)
+                : tol;
+
+            if(pointLine(x, y, e.x1, e.y1, e.x2, e.y2) < t) return e;
+
+        } else {
+
+            if(Math.hypot(x - e.x, y - e.y) < radiusOf(e) + tol * 0.5) return e;
+        }
+    }
+
+    return null;
+}
+
+function pointLine(px, py, x1, y1, x2, y2){
+
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+
+    if(dx === 0 && dy === 0) return Math.hypot(px - x1, py - y1);
+
+    let t = ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy);
+    t = clamp(t, 0, 1);
+
+    return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+/* =====================================================
+   DESENHO
+===================================================== */
+
+function draw(){
+
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+    /* papel branco */
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+
+    if(gridOn) drawGrid(ctx, W, H);
+
+    ctx.save();
+    ctx.translate(view.x, view.y);
+    ctx.scale(view.scale, view.scale);
+
+    for(const e of elements){
+        drawElement(ctx, e, e === selected);
+    }
+
+    if(draft) drawDraft(ctx);
+
+    ctx.restore();
+
+    /* atualizar barra de estado */
+    $("zoomText").textContent = Math.round(view.scale * 100) + "%";
+    $("countText").textContent = elements.length +
+        (elements.length === 1 ? " elemento" : " elementos");
+}
+
+/* ---------- grelha ---------- */
+
+function drawGrid(c, w, h){
+
+    const step = grid * view.scale;
+    if(step < 7) return;
+
+    const ox = view.x % step;
+    const oy = view.y % step;
+
+    c.save();
+    c.lineWidth = 1;
+    c.strokeStyle = "#e8eeea";
+
+    c.beginPath();
+    for(let x = ox; x < w; x += step){
+        c.moveTo(Math.round(x) + 0.5, 0);
+        c.lineTo(Math.round(x) + 0.5, h);
+    }
+    for(let y = oy; y < h; y += step){
+        c.moveTo(0, Math.round(y) + 0.5);
+        c.lineTo(w, Math.round(y) + 0.5);
+    }
+    c.stroke();
+
+    /* linhas principais a cada 5 m */
+    const step5 = step * 5;
+    if(step5 > 14){
+
+        c.strokeStyle = "#d3ded7";
+
+        c.beginPath();
+        for(let x = view.x % step5; x < w; x += step5){
+            c.moveTo(Math.round(x) + 0.5, 0);
+            c.lineTo(Math.round(x) + 0.5, h);
+        }
+        for(let y = view.y % step5; y < h; y += step5){
+            c.moveTo(0, Math.round(y) + 0.5);
+            c.lineTo(w, Math.round(y) + 0.5);
+        }
+        c.stroke();
+    }
+
+    /* eixos do origem */
+    c.strokeStyle = "#c3d0c8";
+    c.lineWidth = 1.4;
+
+    c.beginPath();
+    c.moveTo(view.x, 0);  c.lineTo(view.x, h);
+    c.moveTo(0, view.y);  c.lineTo(w, view.y);
+    c.stroke();
+
+    c.restore();
+}
+
+/* ---------- elemento ---------- */
+
+function drawElement(c, e, isSel){
+
+    switch(e.type){
+        case "wall":      drawWall(c, e);      break;
+        case "door":      drawDoor(c, e);      break;
+        case "window":    drawWindow(c, e);    break;
+        case "lamp":      drawLamp(c, e);      break;
+        case "switch":    drawSwitch(c, e);    break;
+        case "socket":    drawSocket(c, e);    break;
+        case "panel":     drawPanel(c, e);     break;
+        case "wire":      drawWire(c, e);      break;
+        case "dimension": drawDimension(c, e); break;
+        case "text":      drawText(c, e);      break;
+    }
+
+    if(isSel) drawSelection(c, e);
+}
+
+/* ---------- parede (PRETA) ---------- */
+
+function drawWall(c, e){
+    c.save();
+    c.strokeStyle = INK;
+    c.lineWidth = e.w || wallDefault;
+    c.lineCap = "butt";
+    c.beginPath();
+    c.moveTo(e.x1, e.y1);
+    c.lineTo(e.x2, e.y2);
+    c.stroke();
+    c.restore();
+}
+
+/* ---------- porta ---------- */
+
+function drawDoor(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+    c.rotate((e.angle || 0) * Math.PI / 180);
+
+    c.strokeStyle = INK;
+    c.lineWidth = 3;
+    c.lineCap = "round";
+
+    /* folha da porta */
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.lineTo(80, 0);
+    c.stroke();
+
+    /* arco de abertura */
+    c.lineWidth = 1.6;
+    c.beginPath();
+    c.arc(0, 0, 80, 0, Math.PI / 2);
+    c.stroke();
+
+    /* batente */
+    c.lineWidth = 3;
+    c.beginPath();
+    c.moveTo(0, 0);
+    c.lineTo(0, 80);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x + 12, e.y + 78);
+}
+
+/* ---------- janela ---------- */
+
+function drawWindow(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+    c.rotate((e.angle || 0) * Math.PI / 180);
+
+    c.strokeStyle = BLUE;
+    c.lineWidth = 7;
+    c.lineCap = "butt";
+
+    c.beginPath();
+    c.moveTo(-40, 0);
+    c.lineTo(40, 0);
+    c.stroke();
+
+    c.strokeStyle = "#8fc9e8";
+    c.lineWidth = 1.4;
+
+    c.beginPath();
+    c.moveTo(-40, -7); c.lineTo(40, -7);
+    c.moveTo(-40,  7); c.lineTo(40,  7);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x + 44, e.y + 4);
+}
+
+/* ---------- lâmpada ---------- */
+
+function drawLamp(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+
+    c.strokeStyle = AMBER;
+    c.lineWidth = 2.6;
+
+    c.beginPath();
+    c.arc(0, 0, 13, 0, Math.PI * 2);
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(-9, -9); c.lineTo(9, 9);
+    c.moveTo( 9, -9); c.lineTo(-9, 9);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x + 17, e.y + 4);
+}
+
+/* ---------- interruptor ---------- */
+
+function drawSwitch(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+
+    c.strokeStyle = ORANGE;
+    c.lineWidth = 2.6;
+
+    c.beginPath();
+    c.arc(0, 0, 9, 0, Math.PI * 2);
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(-3, 5);
+    c.lineTo(5, -5);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x + 14, e.y + 4);
+}
+
+/* ---------- tomada ---------- */
+
+function drawSocket(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+
+    c.strokeStyle = BLUE;
+    c.lineWidth = 2.4;
+
+    c.beginPath();
+    c.arc(0, 0, 11, 0, Math.PI * 2);
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(-4, -3); c.lineTo(-4, 3);
+    c.moveTo( 4, -3); c.lineTo( 4, 3);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x + 15, e.y + 4);
+}
+
+/* ---------- quadro elétrico ---------- */
+
+function drawPanel(c, e){
+
+    c.save();
+    c.translate(e.x, e.y);
+
+    c.strokeStyle = RED;
+    c.lineWidth = 2.6;
+
+    c.strokeRect(-22, -28, 44, 56);
+
+    c.beginPath();
+    c.moveTo(-12, -15); c.lineTo(12, 15);
+    c.moveTo( 12, -15); c.lineTo(-12, 15);
+    c.stroke();
+
+    c.restore();
+
+    drawLabel(c, e.label, e.x - 12, e.y + 44);
+}
+
+/* ---------- condutor ---------- */
+
+function drawWire(c, e){
+
+    c.save();
+
+    c.strokeStyle = BLUE;
+    c.lineWidth = 2.4;
+    c.setLineDash([9, 6]);
+
+    c.beginPath();
+    c.moveTo(e.x1, e.y1);
+    c.lineTo(e.x2, e.y2);
+    c.stroke();
+
+    c.setLineDash([]);
+
+    c.fillStyle = BLUE;
+    c.beginPath(); c.arc(e.x1, e.y1, 4, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(e.x2, e.y2, 4, 0, Math.PI * 2); c.fill();
+
+    c.restore();
+
+    if(e.label){
+        const mx = (e.x1 + e.x2) / 2;
+        const my = (e.y1 + e.y2) / 2;
+        drawLabel(c, e.label, mx + 6, my - 6);
+    }
+}
+
+/* ---------- cota ---------- */
+
+function drawDimension(c, e){
+
+    const dx = e.x2 - e.x1;
+    const dy = e.y2 - e.y1;
+
+    const metros = Math.hypot(dx, dy) / grid;
+    const ang = Math.atan2(dy, dx);
+
+    c.save();
+
+
+    c.strokeStyle = DIM;
+    c.lineWidth = 1.3;
+
+    c.beginPath();
+    c.moveTo(e.x1, e.y1);
+    c.lineTo(e.x2, e.y2);
+    c.stroke();
+
+    /* travessas */
+    const t = 7;
+    c.beginPath();
+    c.moveTo(e.x1 - t * Math.cos(ang + Math.PI/2), e.y1 - t * Math.sin(ang + Math.PI/2));
+    c.lineTo(e.x1 + t * Math.cos(ang + Math.PI/2), e.y1 + t * Math.sin(ang + Math.PI/2));
+    c.moveTo(e.x2 - t * Math.cos(ang + Math.PI/2), e.y2 - t * Math.sin(ang + Math.PI/2));
+    c.lineTo(e.x2 + t * Math.cos(ang + Math.PI/2), e.y2 + t * Math.sin(ang + Math.PI/2));
+    c.stroke();
+
+    /* setas */
+    const s = 7;
+    c.beginPath();
+    c.moveTo(e.x1, e.y1);
+    c.lineTo(e.x1 + s * Math.cos(ang - .5), e.y1 + s * Math.sin(ang - .5));
+    c.moveTo(e.x1, e.y1);
+    c.lineTo(e.x1 + s * Math.cos(ang + .5), e.y1 + s * Math.sin(ang + .5));
+    c.moveTo(e.x2, e.y2);
+    c.lineTo(e.x2 - s * Math.cos(ang - .5), e.y2 - s * Math.sin(ang - .5));
+    c.moveTo(e.x2, e.y2);
+    c.lineTo(e.x2 - s * Math.cos(ang + .5), e.y2 - s * Math.sin(ang + .5));
+    c.stroke();
+
+    c.restore();
+
+    /* texto sempre na horizontal */
+    const mx = (e.x1 + e.x2) / 2;
+    const my = (e.y1 + e.y2) / 2;
+
+    c.save();
+    c.fillStyle = DIM;
+    c.font = "12px Arial";
+    c.textAlign = "center";
+    c.textBaseline = "bottom";
+    c.fillText(metros.toFixed(2) + " m", mx, my - 6);
+    c.restore();
+}
+
+/* ---------- texto ---------- */
+
+function drawText(c, e){
+
+    c.save();
+    c.fillStyle = INK;
+    c.font = (e.size || 18) + "px Arial";
+    c.textAlign = "left";
+    c.textBaseline = "alphabetic";
+    c.fillText(e.text || "", e.x, e.y);
+    c.restore();
+}
+
+/* ---------- etiqueta ---------- */
+
+function drawLabel(c, texto, x, y){
+
+    if(!texto) return;
+
+    c.save();
+    c.fillStyle = INK;
+    c.font = "11px Arial";
+    c.textAlign = "left";
+    c.textBaseline = "middle";
+    c.fillText(texto, x, y);
+    c.restore();
+}
+
+/* ---------- limites do elemento ---------- */
+
+function elementBounds(e){
+
+    if(e.type === "wall" || e.type === "wire" || e.type === "dimension"){
+
+        const t = e.type === "wall" ? (e.w || wallDefault) / 2 + 2 : 8;
+
+        const x1 = Math.min(e.x1, e.x2) - t;
+        const y1 = Math.min(e.y1, e.y2) - t;
+        const x2 = Math.max(e.x1, e.x2) + t;
+        const y2 = Math.max(e.y1, e.y2) + t;
+
+        return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+    }
+
+    if(e.type === "text"){
+        const size = e.size || 18;
+        ctx.save();
+        ctx.font = size + "px Arial";
+        const w = ctx.measureText(e.text || "").width;
+        ctx.restore();
+        return { x: e.x - 4, y: e.y - size, w: w + 8, h: size * 1.35 };
+    }
+
+    const r = radiusOf(e) + 6;
+    return { x: e.x - r, y: e.y - r, w: r * 2, h: r * 2 };
+}
+
+/* ---------- seleção ---------- */
+
+function drawSelection(c, e){
+
+    const b = elementBounds(e);
+
+    c.save();
+    c.strokeStyle = SEL;
+    c.lineWidth = 1.5 / view.scale;
+    c.setLineDash([7 / view.scale, 5 / view.scale]);
+    c.strokeRect(b.x, b.y, b.w, b.h);
+    c.restore();
+}
+
+/* ---------- rascunho ---------- */
+
+function drawDraft(c){
+
+    if(!draft) return;
+
+    const len = Math.hypot(draft.x2 - draft.x1, draft.y2 - draft.y1) / grid;
+
+    c.save();
+
+    c.strokeStyle = SEL;
+    c.lineWidth = 2 / view.scale;
+    c.setLineDash([8 / view.scale, 6 / view.scale]);
+
+    c.beginPath();
+    c.moveTo(draft.x1, draft.y1);
+    c.lineTo(draft.x2, draft.y2);
+    c.stroke();
+
+    c.setLineDash([]);
+
+    c.fillStyle = SEL;
+    c.beginPath(); c.arc(draft.x1, draft.y1, 4 / view.scale, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.arc(draft.x2, draft.y2, 4 / view.scale, 0, Math.PI * 2); c.fill();
+
+    if(len > 0.05){
+        c.fillStyle = "#007a3d";
+        c.font = (12 / view.scale) + "px Arial";
+        c.textAlign = "left";
+        c.fillText(len.toFixed(2) + " m", draft.x2 + 8 / view.scale, draft.y2 - 8 / view.scale);
+    }
+
+    c.restore();
+}
+
+/* =====================================================
+   PAINEL DE PROPRIEDADES
+===================================================== */
+
+function renderProps(){
+
+    const panel = $("props");
+    const body  = $("propsBody");
+
+    body.innerHTML = "";
+
+    if(!selected || tool === "pan" || tool === "erase"){
+        panel.classList.add("hidden");
+        return;
+    }
+
+    panel.classList.remove("hidden");
+    $("propsTitle").textContent = nomeTool(selected.type);
+
+    const field = (txt, node) => {
+        const d = document.createElement("div");
+        d.className = "field";
+        const l = document.createElement("label");
+        l.textContent = txt;
+        d.appendChild(l);
+        d.appendChild(node);
+        body.appendChild(d);
+    };
+
+    const mkInput = (type, value, min, max, step) => {
+        const i = document.createElement("input");
+        i.type = type;
+        i.value = value;
+        if(min !== undefined) i.min = min;
+        if(max !== undefined) i.max = max;
+        if(step !== undefined) i.step = step;
+        return i;
+    };
+
+    /* identificação */
+    if(["door","window","lamp","switch","socket","panel","wire"].includes(selected.type)){
+
+        const inp = mkInput("text", selected.label || "");
+        inp.maxLength = 12;
+        inp.onchange = () => {
+            pushHistory();
+            selected.label = inp.value;
+            draw();
+        };
+        field("Identificação", inp);
+    }
+
+    /* ângulo */
+    if(["door","window","lamp","switch","socket","panel"].includes(selected.type)){
+
+        const row = document.createElement("div");
+        row.className = "row";
+
+        const b1 = document.createElement("button");
+        b1.textContent = "↶";
+        b1.onclick = () => rotate(-15);
+
+        const inp = mkInput("number", Math.round(selected.angle || 0), -360, 360, 15);
+        inp.onchange = () => {
+            pushHistory();
+            selected.angle = parseFloat(inp.value) || 0;
+            draw();
+        };
+
+        const b2 = document.createElement("button");
+        b2.textContent = "↷";
+        b2.onclick = () => rotate(15);
+
+        row.append(b1, inp, b2);
+        field("Ângulo (°)", row);
+    }
+
+    /* espessura da parede */
+    if(selected.type === "wall"){
+        const inp = mkInput("number", selected.w || wallDefault, 2, 60, 1);
+        inp.onchange = () => {
+            pushHistory();
+            selected.w = clamp(parseFloat(inp.value) || wallDefault, 2, 60);
+            draw();
+        };
+        field("Espessura (px)", inp);
+    }
+
+    /* texto */
+    if(selected.type === "text"){
+
+        const inp = mkInput("text", selected.text || "");
+        inp.onchange = () => {
+            pushHistory();
+            selected.text = inp.value;
+            draw();
+        };
+        field("Texto", inp);
+
+        const sz = mkInput("number", selected.size || 18, 8, 120, 1);
+        sz.onchange = () => {
+            pushHistory();
+            selected.size = clamp(parseFloat(sz.value) || 18, 8, 120);
+            draw();
+        };
+        field("Tamanho", sz);
+    }
+
+    /* comprimento */
+    if(["wall","wire","dimension"].includes(selected.type)){
+
+        const len = Math.hypot(selected.x2 - selected.x1, selected.y2 - selected.y1) / grid;
+
+        const info = document.createElement("div");
+        info.className = "info";
+        info.textContent = "Comprimento: " + len.toFixed(2) + " m";
+        body.appendChild(info);
+    }
+}
+
+function deselect(){
+    selected = null;
+    renderProps();
+    draw();
+}
+
+/* =====================================================
+   AÇÕES
+===================================================== */
+
+function deleteSelected(){
+
+    if(!selected){ toast("Nenhum elemento selecionado."); return; }
+
+    pushHistory();
+
+    elements = elements.filter(e => e.id !== selected.id);
+    selected = null;
+
+    renderProps();
+    draw();
+}
+
+function duplicateSelected(){
+
+    if(!selected){ toast("Nenhum elemento selecionado."); return; }
+
+    pushHistory();
+
+    const copia = JSON.parse(JSON.stringify(selected));
+    copia.id = uid();
+
+    if(copia.x1 !== undefined){
+        copia.x1 += grid; copia.y1 += grid;
+        copia.x2 += grid; copia.y2 += grid;
+    } else {
+        copia.x += grid; copia.y += grid;
+    }
+
+    elements.push(copia);
+    selected = copia;
+
+    renderProps();
+    draw();
+    toast("Elemento duplicado");
+}
+
+function rotate(angle){
+
+    if(!selected){ toast("Selecione um elemento primeiro."); return; }
+
+    if(selected.angle === undefined){
+        toast("Este elemento não pode ser rodado.");
+        return;
+    }
+
+    pushHistory();
+
+    selected.angle = (selected.angle || 0) + angle;
+
+    renderProps();
+    draw();
+}
+
+/* ---------- zoom ---------- */
+
+function zoom(fator){
+    zoomAt(fator, W / 2, H / 2);
+}
+
+function zoomAt(fator, cx, cy){
+
+    const novo = clamp(view.scale * fator, 0.15, 8);
+    const k = novo / view.scale;
+
+    view.x = cx - (cx - view.x) * k;
+    view.y = cy - (cy - view.y) * k;
+    view.scale = novo;
+
+    draw();
+}
+
+canvas.addEventListener("wheel", ev => {
+
+    ev.preventDefault();
+
+    const r = canvas.getBoundingClientRect();
+    const cx = ev.clientX - r.left;
+    const cy = ev.clientY - r.top;
+
+    zoomAt(ev.deltaY < 0 ? 1.12 : 1 / 1.12, cx, cy);
+
+}, { passive: false });
+
+/* ---------- vista ---------- */
+
+function resetView(){
+    view.scale = 1;
+    view.x = W / 2;
+    view.y = H / 2;
+    draw();
+}
+
+function sceneBounds(){
+
+    let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+
+    for(const e of elements){
+        const b = elementBounds(e);
+        x1 = Math.min(x1, b.x);
+        y1 = Math.min(y1, b.y);
+        x2 = Math.max(x2, b.x + b.w);
+        y2 = Math.max(y2, b.y + b.h);
+    }
+
+    if(!isFinite(x1)) return { x: 0, y: 0, w: grid * 10, h: grid * 10 };
+
+    return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+}
+
+function fitView(){
+
+    if(!elements.length){ resetView(); return; }
+
+    const b = sceneBounds();
+    const pad = 60;
+
+    const s = clamp(
+        Math.min((W - pad * 2) / Math.max(1, b.w), (H - pad * 2) / Math.max(1, b.h)),
+        0.15, 4
+    );
+
+    view.scale = s;
+    view.x = W / 2 - (b.x + b.w / 2) * s;
+    view.y = H / 2 - (b.y + b.h / 2) * s;
+
+    draw();
+}
+
+/* ---------- grelha / encaixe ---------- */
+
+function toggleGrid(){
+    gridOn = !gridOn;
+    $("btnGrid").style.background = gridOn ? "" : "#3a2a2a";
+    draw();
+}
+
+function toggleSnap(){
+    snapOn = !snapOn;
+    $("btnSnap").style.background = snapOn ? "" : "#3a2a2a";
+    toast(snapOn ? "Encaixe ativo" : "Encaixe desligado");
+}
+
+/* =====================================================
+   TEXTO
+===================================================== */
+
+function openTextModal(){
+    const m = $("textModal");
+    m.classList.add("show");
+    setTimeout(() => $("textInput").focus(), 50);
+}
+
+function closeText(){
+    $("textModal").classList.remove("show");
+    $("textInput").value = "";
+    textPoint = null;
+}
+
+function addText(){
+
+    const input = $("textInput");
+    const valor = input.value.trim();
+
+    if(valor === ""){ toast("Digite um texto."); input.focus(); return; }
+    if(!textPoint){ closeText(); return; }
+
+    pushHistory();
+
+    const novo = {
+        id: uid(),
+        type: "text",
+        x: textPoint.x,
+        y: textPoint.y,
+        text: valor,
+        size: 18
+    };
+
+    elements.push(novo);
+    selected = novo;
+
+    closeText();
+
+    renderProps();
+    draw();
+}
+
+$("textInput").addEventListener("keydown", ev => {
+    if(ev.key === "Enter"){ ev.preventDefault(); addText(); }
+    if(ev.key === "Escape"){ ev.preventDefault(); closeText(); }
+});
+
+/* =====================================================
+   GUARDAR / ABRIR
+===================================================== */
+
+function saveFile(){
+
+    const dados = {
+        app: "ElectroPlan Pro",
+        version: "4.0",
+        grid: grid,
+        wall: wallDefault,
+        view: { x: view.x, y: view.y, scale: view.scale },
+        elements: elements
+    };
+
+    const texto = JSON.stringify(dados, null, 2);
+
+    const blob = new Blob([texto], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "ElectroPlan-Pro.json";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    toast("Projeto guardado");
+}
+
+function loadFile(){
+    $("fileInput").click();
+}
+
+$("fileInput").addEventListener("change", function(){
+
+    const arquivo = this.files[0];
+    if(!arquivo) return;
+
+    const leitor = new FileReader();
+
+    leitor.onload = () => {
+
+        try{
+
+            const dados = JSON.parse(leitor.result);
+
+            if(!dados.elements || !Array.isArray(dados.elements)){
+                throw new Error("Formato inválido");
+            }
+
+            elements = dados.elements;
+
+            grid        = dados.grid || 40;
+            wallDefault = dados.wall || 14;
+
+            if(dados.view &&
+               typeof dados.view.x === "number" &&
+               typeof dados.view.y === "number" &&
+               typeof dados.view.scale === "number"){
+
+                view.x = dados.view.x;
+                view.y = dados.view.y;
+                view.scale = clamp(dados.view.scale, 0.15, 8);
+            }
+
+            selected = null;
+            history = [];
+            future  = [];
+
+            renderProps();
+            draw();
+
+            toast("Projeto carregado com sucesso");
+
+        } catch(err){
+            toast("Ficheiro inválido para o ElectroPlan.");
+        }
+
+        this.value = "";
+    };
+
+    leitor.readAsText(arquivo);
+});
+
+/* =====================================================
+   EXPORTAR PNG  (fundo branco, sem grelha)
+===================================================== */
+
+function exportPNG(){
+
+    if(!elements.length){
+        toast("Não existem elementos para exportar.");
+        return;
+    }
+
+    const b = sceneBounds();
+    const pad = 60;
+    const escala = 2;
+
+    const largura = Math.ceil((b.w + pad * 2) * escala);
+    const altura  = Math.ceil((b.h + pad * 2) * escala);
+
+    /* limite de segurança */
+    if(largura > 8000 || altura > 8000){
+        toast("Planta demasiado grande para exportar.");
+        return;
+    }
+
+    const off = document.createElement("canvas");
+    off.width  = largura;
+    off.height = altura;
+
+    const c = off.getContext("2d");
+
+    c.fillStyle = "#ffffff";
+    c.fillRect(0, 0, largura, altura);
+
+    c.save();
+    c.scale(escala, escala);
+    c.translate(-b.x + pad, -b.y + pad);
+
+    for(const e of elements){
+        drawElement(c, e, false);
+    }
+
+    c.restore();
+
+    off.toBlob(blob => {
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "ElectroPlan-Planta.png";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+        toast("PNG exportado");
+
+    }, "image/png");
+}
+
+/* =====================================================
+   NOVO PROJETO
+===================================================== */
+
+function newProject(){
+
+    if(elements.length > 0){
+        if(!confirm("Tem certeza que deseja apagar o projeto atual?")) return;
+    }
+
+    elements = [];
+    selected = null;
+    history  = [];
+    future   = [];
+    draft    = null;
+    action   = null;
+
+    renderProps();
+    resetView();
+}
+
+/* =====================================================
+   TECLADO
+===================================================== */
+
+document.addEventListener("keydown", ev => {
+
+    const t = ev.target;
+
+    /* não interferir com campos de texto */
+    if(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
+
+    /* barra de espaço → deslocar */
+    if(ev.code === "Space"){
+        spaceDown = true;
+        canvas.style.cursor = "grab";
+        ev.preventDefault();
+        return;
+    }
+
+    /* apagar */
+    if(ev.key === "Delete" || ev.key === "Backspace"){
+        ev.preventDefault();
+        deleteSelected();
+        return;
+    }
+
+    /* desfazer / refazer */
+    if(ev.ctrlKey || ev.metaKey){
+
+        const k = ev.key.toLowerCase();
+
+        if(k === "z" && !ev.shiftKey){ ev.preventDefault(); undo(); return; }
+        if(k === "y" || (k === "z" && ev.shiftKey)){ ev.preventDefault(); redo(); return; }
+        if(k === "d"){ ev.preventDefault(); duplicateSelected(); return; }
+        if(k === "s"){ ev.preventDefault(); saveFile(); return; }
+    }
+
+    /* escapar */
+    if(ev.key === "Escape"){
+        draft  = null;
+        action = null;
+        selected = null;
+        renderProps();
+        draw();
+        return;
+    }
+
+    /* rodar */
+    if(ev.key.toLowerCase() === "r"){
+        rotate(ev.shiftKey ? -15 : 15);
+        return;
+    }
+
+    /* mover com as setas */
+    if(selected && ev.key.startsWith("Arrow")){
+
+        ev.preventDefault();
+
+        const passo = ev.shiftKey ? grid : grid / 4;
+
+        const dx = ev.key === "ArrowLeft"  ? -passo :
+                   ev.key === "ArrowRight" ?  passo : 0;
+
+        const dy = ev.key === "ArrowUp"    ? -passo :
+                   ev.key === "ArrowDown"  ?  passo : 0;
+
+        pushHistory();
+
+        if(selected.x1 !== undefined){
+            selected.x1 += dx; selected.y1 += dy;
+            selected.x2 += dx; selected.y2 += dy;
+        } else {
+            selected.x += dx; selected.y += dy;
+        }
+
+        draw();
+    }
+});
+
+document.addEventListener("keyup", ev => {
+    if(ev.code === "Space"){
+        spaceDown = false;
+        canvas.style.cursor = tool === "pan" ? "grab" : "crosshair";
+    }
+});
+
+/* =====================================================
+   INICIALIZAÇÃO
+===================================================== */
+
+resize();
+draw();
+</script>
+
+</body>
+</html>
+```
